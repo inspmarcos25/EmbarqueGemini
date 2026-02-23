@@ -25,7 +25,9 @@ import {
   Clock,
   Edit2,
   Trash2,
-  X
+  X,
+  Gift,
+  Flag
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -81,6 +83,21 @@ const CERTIFICATIONS: Certification[] = [
   { id: '1', name: 'BOSIET', expiryDate: 'Dez 2027', status: 'valid' },
   { id: '2', name: 'HUET', expiryDate: 'Jan 2028', status: 'valid' },
   { id: '3', name: 'NR-37', expiryDate: 'Out 2026', status: 'valid' },
+];
+
+const HOLIDAYS_2026 = [
+  { date: '2026-01-01', name: 'Confraternização Universal' },
+  { date: '2026-02-17', name: 'Carnaval' },
+  { date: '2026-04-03', name: 'Sexta-feira Santa' },
+  { date: '2026-04-21', name: 'Tiradentes' },
+  { date: '2026-05-01', name: 'Dia do Trabalho' },
+  { date: '2026-06-04', name: 'Corpus Christi' },
+  { date: '2026-09-07', name: 'Independência do Brasil' },
+  { date: '2026-10-12', name: 'Nossa Senhora Aparecida' },
+  { date: '2026-11-02', name: 'Finados' },
+  { date: '2026-11-15', name: 'Proclamação da República' },
+  { date: '2026-11-20', name: 'Consciência Negra' },
+  { date: '2026-12-25', name: 'Natal' },
 ];
 
 export default function App() {
@@ -379,7 +396,7 @@ export default function App() {
                           const config = getRotationConfig(profile.rotationType);
                           end.setDate(end.getDate() + config.on);
                           return end.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
-                        })()} (14:00)
+                        })()}
                       </span>
                     </div>
                   </div>
@@ -414,6 +431,50 @@ export default function App() {
                   <LegendItem color="bg-primary/20 border-primary" label="Embarcado" />
                   <LegendItem color="bg-amber-500/20 border-amber-500" label="Pré-Embarque" />
                   <LegendItem color="bg-emerald-500/20 border-emerald-500" label="Folga" />
+                </div>
+              </section>
+
+              {/* National Holidays Card */}
+              <section className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="size-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center">
+                      <Flag size={18} />
+                    </div>
+                    <h3 className="text-sm font-bold">Feriados Nacionais 2026</h3>
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Brasil</span>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto pr-2 no-scrollbar">
+                  {HOLIDAYS_2026.map((holiday, idx) => {
+                    const date = new Date(holiday.date + 'T00:00:00');
+                    const isPast = date < new Date();
+                    return (
+                      <div 
+                        key={idx} 
+                        className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
+                          isPast 
+                            ? 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 opacity-50' 
+                            : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-primary/30'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`size-10 rounded-xl flex flex-col items-center justify-center ${
+                            isPast ? 'bg-slate-200 dark:bg-slate-700 text-slate-500' : 'bg-primary/10 text-primary'
+                          }`}>
+                            <span className="text-[10px] font-bold uppercase leading-none">{date.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')}</span>
+                            <span className="text-lg font-bold leading-none mt-0.5">{date.getDate()}</span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold">{holiday.name}</p>
+                            <p className="text-[10px] text-slate-500 font-medium">{date.toLocaleDateString('pt-BR', { weekday: 'long' })}</p>
+                          </div>
+                        </div>
+                        {!isPast && <Gift size={14} className="text-rose-400" />}
+                      </div>
+                    );
+                  })}
                 </div>
               </section>
 
